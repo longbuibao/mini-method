@@ -1,0 +1,43 @@
+﻿<Window x:Class="MethodRunner.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModel="clr-namespace:ViewModel;assembly=ViewModel"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Window.DataContext>
+        <viewModel:DllInspectorViewModel />
+    </Window.DataContext>
+    <Grid>
+        <TextBox Name="DllPathTextBox" Text="{Binding DllPath, Mode=TwoWay}" HorizontalAlignment="Left"
+                 VerticalAlignment="Top" Width="400" Height="30" Margin="10" />
+        <Button Content="Load DLL" Command="{Binding LoadDllCommand}" CommandParameter="{Binding DllPath}"
+                HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="40" Margin="420,10,0,0" />
+        <ListBox Name="ClassListBox" ItemsSource="{Binding ClassNames}" HorizontalAlignment="Left"
+                 VerticalAlignment="Top" Width="560" Height="150" Margin="10,50,10,0" />
+        <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Vertical">
+                <ListBox Name="MethodListBox" ItemsSource="{Binding MethodNames}" HorizontalAlignment="Left"
+                         SelectedItem="{Binding SelectedMethod, Mode=TwoWay}"
+                         VerticalAlignment="Top" Width="560" Height="150" Margin="10,210,10,0" />
+            </StackPanel>
+            <Grid>
+                <StackPanel Name="ParametersPanel" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top" Width="560" Margin="10,50,10,0">
+                    <ItemsControl ItemsSource="{Binding MethodParameters}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Width="100"/>
+                                    <TextBox Text="{Binding Value}" Width="100" HorizontalAlignment="Left"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+                <Button Content="Execute" Command="{Binding ExecuteMethodCommand}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="40" Margin="10,220,0,0"/>
+                <TextBlock Text="{Binding Result}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="560" Margin="10,270,10,0" />
+            </Grid>
+        </StackPanel>
+    </Grid>
+</Window>
