@@ -9,13 +9,6 @@ using Model;
 
 namespace ViewModel
 {
-    public class MethodParameter
-    {
-        public string Name { get; set; }
-        public Type Type { get; set; }
-        public object Value { get; set; }
-    }
-
     public class DllInspectorViewModel: BaseViewModel
     {
         private readonly DllInspectorModel _dllInspectorModel;
@@ -24,7 +17,7 @@ namespace ViewModel
         private ObservableCollection<string> _methodNames;
         private string _selectedMethod;
         private List<MethodParameter> _methodParameters;
-        private string _result;
+        private object? _result = null;
 
         public List<MethodParameter> MethodParameters
         {
@@ -32,7 +25,7 @@ namespace ViewModel
             set => SetProperty(ref _methodParameters, value);
         }
 
-        public string Result
+        public object? Result
         {
             get => _result;
             set => SetProperty(ref _result, value);
@@ -64,7 +57,9 @@ namespace ViewModel
 
         public ICommand LoadDllCommand { get; }
 
-        public ICommand LoadMethodCommand { get; }
+        public ICommand ExecuteMethodCommand { get; }
+
+        public ICommand GetMethodParamsCommand { get; }
 
         public DllInspectorViewModel()
         {
@@ -72,7 +67,19 @@ namespace ViewModel
             _classNames = new ObservableCollection<string>();
             _methodNames = new ObservableCollection<string>();
             LoadDllCommand = new RelayCommand(LoadDll, CanLoadDll);
-            LoadMethodCommand = new RelayCommand(LoadMethod, CanLoadMethod);
+            ExecuteMethodCommand = new RelayCommand(ExecuteMethod, CanExecuteMethod);
+            GetMethodParamsCommand = new RelayCommand(GetMethodParams, (object _) => true);
+        }
+
+        private void GetMethodParams(object parameter)
+        {
+            var methodParams = _dllInspectorModel.GetMethodParams(SelectedMethod);
+            MethodParameters = methodParams.Select(x => new MethodParameter()
+            {
+                Name = x.Name,
+                Type = x.ParameterType,
+                Value = null,
+            }).ToList();
         }
 
         private bool CanLoadDll(object parameter)
@@ -80,13 +87,12 @@ namespace ViewModel
             return !string.IsNullOrEmpty(DllPath);
         }
 
-        private void LoadMethod(object parameter)
+        private void ExecuteMethod(object parameter)
         {
-            if(parameter is string param)
-                _dllInspectorModel.RunMethod(param);
+            Result = _dllInspectorModel.RunMethod(SelectedMethod, MethodParameters);
         }
 
-        private bool CanLoadMethod(object parameter)
+        private bool CanExecuteMethod(object parameter)
         {
             return true;
         }

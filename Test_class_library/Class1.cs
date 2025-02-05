@@ -2,9 +2,9 @@
 {
     public class Class1
     {
-        public string ExampleMethod(string a, string b)
+        public string ExampleMethod(string a, string b, string c, string d)
         {
-            return a + b;
+            return a + b + c + d;
         }
     }
 }

@@ -7,6 +7,13 @@ using System.Threading.Tasks;
 
 namespace Model
 {
+    public class MethodParameter
+    {
+        public string Name { get; set; }
+        public Type Type { get; set; }
+        public object Value { get; set; }
+    }
+
     public class DllInspectorModel
     {
         public List<string> ClassNames { get; set; } = new List<string>();
@@ -14,9 +21,57 @@ namespace Model
 
         private Assembly? _assembly;
 
-        public void RunMethod(string methodName)
+        public List<ParameterInfo> GetMethodParams(string fullName)
         {
+            if (String.IsNullOrEmpty(fullName))
+            {
+                return new List<ParameterInfo>();
+            }
 
+            if (_assembly != null)
+            {
+                var strs = fullName.Split(".");
+                var className = strs[1];
+                var methodName = strs[2];
+                var type = _assembly.GetTypes().FirstOrDefault(x => x.Name.Equals(className));
+                if (type != null)
+                {
+                    var method = type.GetMethods(BindingFlags.Public | BindingFlags.Instance).FirstOrDefault(m => m.Name == methodName);
+                    if (method != null)
+                    {
+                        return method.GetParameters().ToList();
+                    }
+                }
+            }
+            return new List<ParameterInfo>();
+        }
+
+        public object? RunMethod(string fullName, List<MethodParameter> methodParameters)
+        {
+            if (String.IsNullOrEmpty(fullName))
+            {
+                return new List<ParameterInfo>();
+            }
+
+            if (_assembly != null)
+            {
+                var strs = fullName.Split(".");
+                var className = strs[1];
+                var methodName = strs[2];
+                var type = _assembly.GetTypes().FirstOrDefault(x => x.Name.Equals(className));
+                if (type != null)
+                {
+                    object[] parameters = methodParameters.Select(p => Convert.ChangeType(p.Value, p.Type)).ToArray();
+                    var method = type.GetMethods(BindingFlags.Public | BindingFlags.Instance).FirstOrDefault(m => m.Name == methodName);
+                    var instance = Activator.CreateInstance(type);
+                    if (instance != null && method != null)
+                    {
+                        return method.Invoke(instance, parameters);
+                    }
+                }
+            }
+
+            return null;
         }
 
         public bool LoadDll(string filePath)

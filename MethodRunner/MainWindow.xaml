@@ -13,31 +13,34 @@
         <TextBox Name="DllPathTextBox" Text="{Binding DllPath, Mode=TwoWay}" HorizontalAlignment="Left"
                  VerticalAlignment="Top" Width="400" Height="30" Margin="10" />
         <Button Content="Load DLL" Command="{Binding LoadDllCommand}" CommandParameter="{Binding DllPath}"
-                HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="40" Margin="420,10,0,0" />
+                HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="30" Margin="420,10,0,0" />
         <ListBox Name="ClassListBox" ItemsSource="{Binding ClassNames}" HorizontalAlignment="Left"
                  VerticalAlignment="Top" Width="560" Height="150" Margin="10,50,10,0" />
-        <StackPanel Orientation="Horizontal">
-            <StackPanel Orientation="Vertical">
+        <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Horizontal">
                 <ListBox Name="MethodListBox" ItemsSource="{Binding MethodNames}" HorizontalAlignment="Left"
                          SelectedItem="{Binding SelectedMethod, Mode=TwoWay}"
                          VerticalAlignment="Top" Width="560" Height="150" Margin="10,210,10,0" />
-            </StackPanel>
-            <Grid>
-                <StackPanel Name="ParametersPanel" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top" Width="560" Margin="10,50,10,0">
-                    <ItemsControl ItemsSource="{Binding MethodParameters}">
+                <StackPanel>
+                    <ItemsControl ItemsSource="{Binding MethodParameters}" Margin="10, 210, 0 , 0">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Width="100"/>
+                                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Width="50"/>
                                     <TextBox Text="{Binding Value}" Width="100" HorizontalAlignment="Left"/>
                                 </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10, 10, 0 , 0">
+                        <TextBlock Text="{Binding Result}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="560" />
+                    </StackPanel>
                 </StackPanel>
-                <Button Content="Execute" Command="{Binding ExecuteMethodCommand}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="40" Margin="10,220,0,0"/>
-                <TextBlock Text="{Binding Result}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="560" Margin="10,270,10,0" />
-            </Grid>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="10, 10, 10, 10">
+                <Button Margin="0, 0, 10, 10" Content="GetMethodParams" Command="{Binding GetMethodParamsCommand}" HorizontalAlignment="Left" VerticalAlignment="Top" Height="40"/>
+                <Button Margin="10, 0, 10, 10" Content="Execute" Command="{Binding ExecuteMethodCommand}" HorizontalAlignment="Left" VerticalAlignment="Top" Height="40" />
+            </StackPanel>
         </StackPanel>
     </Grid>
 </Window>
